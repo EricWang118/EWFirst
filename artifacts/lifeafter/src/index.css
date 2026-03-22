@@ -1,0 +1,129 @@
+@import url('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: 'Noto Sans SC', sans-serif;
+  --font-display: 'Ma Shan Zheng', cursive;
+
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-card-border: hsl(var(--card-border));
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+
+  --color-rarity-common: hsl(var(--rarity-common));
+  --color-rarity-rare: hsl(var(--rarity-rare));
+  --color-rarity-legendary: hsl(var(--rarity-legendary));
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  /* Enforce Dark Mode Only */
+  --background: 224 35% 6%;
+  --foreground: 210 40% 98%;
+  
+  --card: 224 40% 10%;
+  --card-foreground: 210 40% 98%;
+  --card-border: 224 30% 18%;
+
+  --popover: 224 40% 10%;
+  --popover-foreground: 210 40% 98%;
+  --popover-border: 224 30% 18%;
+
+  --primary: 35 100% 55%; /* Amber / Orange for game action */
+  --primary-foreground: 224 40% 10%;
+
+  --secondary: 210 100% 50%; /* Tech Blue */
+  --secondary-foreground: 210 40% 98%;
+
+  --muted: 224 30% 16%;
+  --muted-foreground: 215 20% 65%;
+
+  --accent: 260 80% 60%; /* Purple */
+  --accent-foreground: 210 40% 98%;
+
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 210 40% 98%;
+
+  --border: 224 30% 18%;
+  --input: 224 30% 18%;
+  --ring: 35 100% 55%;
+
+  --rarity-common: 150 20% 60%;
+  --rarity-rare: 210 100% 65%;
+  --rarity-legendary: 35 100% 55%;
+
+  --radius: 0.75rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground overflow-x-hidden;
+    background-image: 
+      radial-gradient(circle at 50% 0%, rgba(30, 60, 100, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(150, 80, 20, 0.1) 0%, transparent 50%);
+    background-attachment: fixed;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold tracking-tight;
+  }
+
+  .font-display {
+    font-family: var(--font-display);
+    letter-spacing: 0.05em;
+  }
+}
+
+@layer utilities {
+  .glass-card {
+    @apply bg-card/60 backdrop-blur-md border border-card-border shadow-xl;
+  }
+  
+  .glass-panel {
+    @apply bg-background/80 backdrop-blur-xl border border-white/5 shadow-2xl;
+  }
+
+  .text-glow {
+    text-shadow: 0 0 10px currentColor;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-background;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-border rounded-full hover:bg-muted-foreground transition-colors;
+  }
+}

@@ -1,0 +1,17 @@
+packages:
+  "framer-motion": "For smooth page transitions, entry animations, and interactive elements"
+  "clsx": "For conditional tailwind classes"
+  "tailwind-merge": "For merging tailwind classes safely"
+
+images:
+  - path: "artifacts/lifeafter/public/images/hero-bg.png"
+    description: "Dark atmospheric post-apocalyptic ruined city with subtle neon glowing accents, highly detailed, cinematic lighting, game concept art style"
+    aspect_ratio: "16:9"
+  - path: "artifacts/lifeafter/public/images/grid-bg.png"
+    description: "Subtle dark futuristic tech grid pattern, seamless, very dark grey and black with slight glowing blue intersections"
+    aspect_ratio: "16:9"
+
+notes:
+  - "Frontend-only application with no backend dependencies"
+  - "All game data is hardcoded into the frontend"
+  - "Requires React Router (wouter) for SPA navigation"

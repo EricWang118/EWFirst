@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/lifeafter/"
+title = "明日之后攻略"
+version = "1.0.0"
+id = "artifacts/lifeafter"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/lifeafter/" ]
+localPort = 24443
+
+[services.development]
+run = "pnpm --filter @workspace/lifeafter run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/lifeafter", "run", "build" ]
+publicDir = "artifacts/lifeafter/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24443"
+BASE_PATH = "/lifeafter/"
