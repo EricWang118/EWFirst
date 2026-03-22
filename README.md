@@ -20,6 +20,10 @@ If you want one version that works on Windows, macOS, Android, and iPhone/iPad, 
 
 You can open it directly in a browser on desktop. For phones, upload it to a static host or file-sharing link and open it in the mobile browser.
 
+## Deployment note
+
+This repository also contains an exported Replit LifeAfter site under `artifacts/lifeafter`, which is deployed through GitHub Pages Actions.
+
 ### Highlights
 
 - Phone-like vertical layout
