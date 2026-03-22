@@ -1,0 +1,20 @@
+给别人直接使用的方法
+
+1. 在你自己的电脑上双击 `build_lifeafter_exe.bat`
+2. 等待打包完成
+3. 打开 `dist` 文件夹
+4. 把 `lifeafter_event_viewer.exe` 发给别人
+5. 对方电脑不需要安装 Python，双击 exe 就能打开
+
+你需要知道的事
+
+1. 只有打包的人需要装 Python
+2. 生成的 exe 体积会比源码大，这是正常的
+3. 第一次打开 exe 可能稍慢，也是正常的
+4. 如果 Windows 弹出安全提示，通常需要手动点“仍要运行”
+
+以后更新活动内容的方法
+
+1. 先修改 `lifeafter_event_app.py`
+2. 再重新双击 `build_lifeafter_exe.bat`
+3. 把新的 `lifeafter_event_viewer.exe` 发给别人即可

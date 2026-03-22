@@ -1,0 +1,922 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>明日之后活动整合器</title>
+  <style>
+    :root {
+      --bg: #edf3ff;
+      --bg-2: #e5edff;
+      --card: rgba(255, 255, 255, 0.88);
+      --card-strong: #ffffff;
+      --line: #d6e1f7;
+      --text: #20304a;
+      --muted: #6f7f9a;
+      --primary: #5e8cff;
+      --primary-deep: #3f6fdd;
+      --tag: #e8f0ff;
+      --shadow: 0 18px 45px rgba(72, 108, 177, 0.14);
+      --radius-xl: 28px;
+      --radius-lg: 22px;
+      --radius-md: 16px;
+      --max: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      font-family: "Microsoft YaHei UI", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(255,255,255,.75), rgba(255,255,255,0) 35%),
+        linear-gradient(180deg, #f3f7ff 0%, #eaf1ff 48%, #edf3ff 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 18% 10%, rgba(159, 187, 255, 0.23), transparent 20%),
+        radial-gradient(circle at 84% 16%, rgba(214, 227, 255, 0.72), transparent 18%),
+        radial-gradient(circle at 50% 110%, rgba(126, 165, 255, 0.12), transparent 22%);
+      z-index: 0;
+    }
+
+    .shell {
+      position: relative;
+      z-index: 1;
+      width: min(calc(100% - 28px), var(--max));
+      margin: 14px auto 34px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      min-height: 260px;
+      padding: 22px 22px 120px;
+      border: 1px solid rgba(255,255,255,.72);
+      border-radius: 34px;
+      background: linear-gradient(180deg, rgba(241,246,255,.96), rgba(228,237,255,.92));
+      box-shadow: var(--shadow);
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.44), rgba(255,255,255,0)),
+        radial-gradient(circle at 28% 5%, rgba(255,255,255,.75), transparent 24%);
+      pointer-events: none;
+    }
+
+    .hero-art {
+      position: absolute;
+      right: 6%;
+      bottom: 8px;
+      width: min(34vw, 240px);
+      aspect-ratio: 1 / 1;
+      pointer-events: none;
+      opacity: .98;
+    }
+
+    .platform-base,
+    .platform-hole,
+    .platform-core,
+    .platform-top {
+      position: absolute;
+      border-radius: 999px;
+    }
+
+    .platform-base {
+      inset: auto 0 16px 0;
+      height: 88px;
+      background: linear-gradient(180deg, #fdfefe, #e9f0ff);
+      box-shadow: inset 0 -12px 24px rgba(100, 135, 202, .1);
+    }
+
+    .platform-hole {
+      inset: auto 18% 28px 18%;
+      height: 42px;
+      background: linear-gradient(180deg, #dce7ff, #c7d9ff);
+    }
+
+    .platform-core {
+      inset: auto 34% 18px 34%;
+      height: 118px;
+      background: linear-gradient(180deg, #84abff, #5b8cff);
+      border-radius: 26px;
+      box-shadow: 0 18px 30px rgba(88, 130, 218, .3);
+    }
+
+    .platform-top {
+      inset: auto 24% 102px 24%;
+      height: 34px;
+      background: linear-gradient(180deg, #a8c4ff, #7ba5ff);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(220, 232, 255, .95);
+      color: var(--primary-deep);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: .2px;
+    }
+
+    .hero h1 {
+      margin: 16px 0 10px;
+      max-width: 620px;
+      font-size: clamp(30px, 5vw, 52px);
+      line-height: 1.06;
+      letter-spacing: -0.03em;
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 560px;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    .hero-highlight {
+      margin-top: 18px;
+      display: inline-flex;
+      padding: 12px 14px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.72);
+      color: var(--primary-deep);
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .toolbar {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    .panel {
+      padding: 14px;
+      border: 1px solid rgba(255,255,255,.72);
+      border-radius: 26px;
+      background: rgba(248, 251, 255, .72);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .panel-head {
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .panel-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      border: 0;
+      border-radius: 999px;
+      background: var(--card-strong);
+      color: var(--text);
+      padding: 11px 16px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: .18s ease;
+      box-shadow: 0 4px 12px rgba(78, 104, 161, .08);
+    }
+
+    .chip:hover { transform: translateY(-1px); }
+    .chip.active {
+      background: linear-gradient(180deg, var(--primary), var(--primary-deep));
+      color: #fff;
+      box-shadow: 0 10px 20px rgba(81, 122, 222, .28);
+    }
+
+    .layout {
+      margin-top: 14px;
+      display: grid;
+      gap: 14px;
+      grid-template-columns: minmax(0, 1.55fr) minmax(300px, .85fr);
+    }
+
+    .stack { display: grid; gap: 14px; }
+
+    .featured-card {
+      padding: 18px;
+      border-radius: 28px;
+      color: #fff;
+      background: linear-gradient(135deg, #5f8dff 0%, #4679ea 48%, #355fc4 100%);
+      box-shadow: 0 20px 34px rgba(67, 106, 196, .25);
+    }
+
+    .featured-top {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .tag {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.18);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .featured-card h2 {
+      margin: 0;
+      font-size: clamp(24px, 4vw, 34px);
+      line-height: 1.15;
+    }
+
+    .featured-meta {
+      margin-top: 12px;
+      color: rgba(239, 245, 255, .94);
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .cards {
+      display: grid;
+      gap: 14px;
+    }
+
+    .card {
+      padding: 18px;
+      border: 1px solid rgba(214, 225, 247, .85);
+      border-radius: 28px;
+      background: var(--card);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .card-top {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .mini-tag {
+      display: inline-flex;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: var(--tag);
+      color: var(--primary-deep);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .mini-tag.status {
+      background: #f4f7ff;
+      color: var(--muted);
+    }
+
+    .card h3 {
+      margin: 0 0 8px;
+      font-size: 22px;
+      line-height: 1.2;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.72;
+      font-size: 14px;
+    }
+
+    .meta {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+      color: var(--text);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .action-row {
+      margin-top: 14px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .primary-btn,
+    .ghost-btn {
+      border: 0;
+      cursor: pointer;
+      transition: .18s ease;
+    }
+
+    .primary-btn {
+      padding: 12px 18px;
+      border-radius: 16px;
+      background: linear-gradient(180deg, var(--primary), var(--primary-deep));
+      color: #fff;
+      font-size: 14px;
+      font-weight: 800;
+      box-shadow: 0 14px 28px rgba(84, 126, 226, .22);
+    }
+
+    .ghost-btn {
+      padding: 10px 14px;
+      border-radius: 14px;
+      background: #eff4ff;
+      color: var(--primary-deep);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .side-panel {
+      padding: 18px;
+      border-radius: 28px;
+      border: 1px solid rgba(214, 225, 247, .88);
+      background: rgba(255,255,255,.82);
+      box-shadow: var(--shadow);
+      display: grid;
+      gap: 14px;
+      align-content: start;
+    }
+
+    .side-title {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .guide-text {
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 14px;
+    }
+
+    .guide-text p {
+      margin: 0 0 10px;
+    }
+
+    .tips-list {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 14px;
+    }
+
+    .footer-note {
+      margin-top: 12px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      place-items: center;
+      padding: 18px;
+      background: rgba(20, 34, 61, .26);
+      backdrop-filter: blur(6px);
+      z-index: 12;
+    }
+
+    .modal.open { display: grid; }
+
+    .modal-card {
+      width: min(820px, 100%);
+      max-height: min(88vh, 920px);
+      overflow: auto;
+      padding: 22px;
+      border-radius: 30px;
+      background: linear-gradient(180deg, #f8fbff, #eff4ff);
+      box-shadow: 0 22px 60px rgba(43, 68, 122, .22);
+    }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: start;
+      margin-bottom: 12px;
+    }
+
+    .modal-title {
+      margin: 0;
+      font-size: clamp(24px, 5vw, 34px);
+      line-height: 1.14;
+    }
+
+    .modal-meta {
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 14px;
+    }
+
+    .section-grid {
+      display: grid;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .section {
+      padding: 16px;
+      border-radius: 22px;
+      background: rgba(255,255,255,.88);
+      border: 1px solid var(--line);
+    }
+
+    .section h4 {
+      margin: 0 0 10px;
+      font-size: 16px;
+    }
+
+    .section ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 14px;
+    }
+
+    @media (max-width: 980px) {
+      .layout { grid-template-columns: 1fr; }
+      .hero { padding-bottom: 144px; }
+      .hero-art { width: min(42vw, 220px); right: 8px; }
+    }
+
+    @media (max-width: 720px) {
+      .shell { width: min(calc(100% - 18px), var(--max)); margin-top: 10px; }
+      .hero { min-height: 240px; padding: 18px 16px 126px; border-radius: 28px; }
+      .panel, .card, .side-panel, .featured-card { border-radius: 24px; }
+      .card h3 { font-size: 20px; }
+      .chips { overflow-x: auto; flex-wrap: nowrap; padding-bottom: 2px; }
+      .chips::-webkit-scrollbar { display: none; }
+      .chip { white-space: nowrap; }
+      .hero-highlight { display: block; width: fit-content; max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <section class="hero">
+      <div class="badge">2026-03-22 公开信息整合</div>
+      <h1>明日之后<br>活动 / 奖池 / 攻略查看器</h1>
+      <p>这是一个可跨平台打开的活动整合版本。Windows、Mac、安卓手机和苹果手机都可以直接用浏览器打开，首页先看主活动，再按分类和玩家类型快速筛选。</p>
+      <div class="hero-highlight" id="heroHighlight">当前最推荐：春日樱花季 / 废土春日</div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="platform-base"></div>
+        <div class="platform-hole"></div>
+        <div class="platform-core"></div>
+        <div class="platform-top"></div>
+      </div>
+    </section>
+
+    <section class="toolbar">
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">活动分类</div>
+        </div>
+        <div class="chips" id="categoryChips"></div>
+      </div>
+    </section>
+
+    <section class="layout">
+      <div class="stack">
+        <article class="featured-card" id="featuredCard"></article>
+        <div class="cards" id="cards"></div>
+      </div>
+
+      <aside class="side-panel">
+        <h3 class="side-title">玩家攻略入口</h3>
+        <div class="chips" id="audienceChips"></div>
+        <div class="guide-text" id="guideText"></div>
+        <div class="section">
+          <h4>使用方式</h4>
+          <ul class="tips-list">
+            <li>Windows / Mac：双击这个 HTML 文件，用浏览器打开。</li>
+            <li>安卓 / 苹果：把这个文件传到网盘或静态网站后，用浏览器访问。</li>
+            <li>如果你后面要发给很多人，最省事的方式是把它上传到 GitHub Pages、Netlify 或 Vercel。</li>
+          </ul>
+        </div>
+      </aside>
+    </section>
+
+    <div class="footer-note">这个版本是响应式网页方案，比 Python 原生桌面版更适合真正跨平台分发。</div>
+  </div>
+
+  <div class="modal" id="modal">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div>
+          <h2 class="modal-title" id="modalTitle"></h2>
+          <div class="modal-meta" id="modalMeta"></div>
+        </div>
+        <button class="ghost-btn" id="closeModal">关闭</button>
+      </div>
+      <div class="section-grid">
+        <section class="section">
+          <h4>玩法摘要</h4>
+          <ul id="modalSummary"></ul>
+        </section>
+        <section class="section">
+          <h4>核心亮点</h4>
+          <ul id="modalHighlights"></ul>
+        </section>
+        <section class="section">
+          <h4>可关注奖励</h4>
+          <ul id="modalRewards"></ul>
+        </section>
+        <section class="section">
+          <h4>推荐顺序</h4>
+          <ul id="modalStrategy"></ul>
+        </section>
+        <section class="section">
+          <h4>实战建议</h4>
+          <ul id="modalTips"></ul>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const events = [
+      {
+        title: "春日樱花季 / 废土春日",
+        category: "主活动",
+        status: "进行中",
+        dateText: "经典服 03/18 起，简单生存专服 03/19 起",
+        priority: "最高",
+        audience: "白嫖、回坑、新服玩家",
+        serverScope: "经典服 / 简单生存专服 / 新服联动",
+        summary: "当前版本主活动包，覆盖樱花绽放、寻觅花林、桃羽收集等多条福利线。",
+        rewards: ["登录福利", "预约奖励", "采集掉落", "春日主题道具", "新服加码"],
+        highlights: [
+          "首页第一优先，适合作为本轮版本主入口。",
+          "不是单点玩法，而是一整包春日福利合集。",
+          "新服“百花漫野”与预约奖励强绑定。"
+        ],
+        strategy: [
+          "先清登录、预约、活跃任务，拿最稳的收益。",
+          "再补采集、打怪、钓鱼这类能顺手完成的项目。",
+          "新服开荒号优先吃满绑定奖励和登录福利。"
+        ],
+        tips: "推荐放在首页顶部，并标记为“本轮必做”。"
+      },
+      {
+        title: "特战巅峰赛测试",
+        category: "竞技",
+        status: "最后一天",
+        dateText: "03/20 - 03/22",
+        priority: "高",
+        audience: "PVP 玩家、组队玩家",
+        serverScope: "赛事测试",
+        summary: "竞技性测试活动，反馈会影响 2026 正式赛事规则。",
+        rewards: ["赛事参与体验", "组队对抗", "海选 / 小组 / 淘汰赛"],
+        highlights: [
+          "今天是最后一天，首页需要置顶提醒。",
+          "不是普通新闻，而是会影响参赛判断的入口信息。",
+          "适合展示赛程、报名方式、组队要求和结束提醒。"
+        ],
+        strategy: [
+          "PVP 玩家优先查看赛程和组队要求。",
+          "普通玩家可放在春日福利之后查看。",
+          "建议作为“竞技入口”单独展示。"
+        ],
+        tips: "后续可扩展为动态倒计时版本。"
+      },
+      {
+        title: "青松季减负",
+        category: "版本优化",
+        status: "推荐关注",
+        dateText: "03 月版本优化专题",
+        priority: "高",
+        audience: "老玩家、回坑党、养老党",
+        serverScope: "全服向",
+        summary: "围绕庄园、养成、日常等系统做减负优化，属于时间价值型内容。",
+        rewards: ["更省时的日常", "更轻的养成流程", "回坑体验改善"],
+        highlights: [
+          "不是领奖活动，但对长期体验非常重要。",
+          "很多玩家会先关心现在还肝不肝。",
+          "建议单独做“本周减负 / 版本优化”栏目。"
+        ],
+        strategy: [
+          "回坑玩家先看这一栏，再决定是否回归。",
+          "养老党优先看庄园和日常减负条目。",
+          "首页推荐文案可写成“本周最值钱的省时间更新”。"
+        ],
+        tips: "这个栏目的吸引力来自节省时间，而不是奖励数量。"
+      },
+      {
+        title: "春苑惠选 · 绿野仙踪",
+        category: "奖池",
+        status: "上新",
+        dateText: "03/19 上线",
+        priority: "中高",
+        audience: "庄园党、建筑党、拍照党",
+        serverScope: "家具池",
+        summary: "小人国主题互动家具池，视觉表现统一，适合单独做奖池详情页。",
+        rewards: ["变小魔法家具", "仙踪落地钟", "奇幻茶杯", "树洞床", "藤蔓躺椅"],
+        highlights: [
+          "交互性强，展示价值比纯数值奖励更高。",
+          "同步上架庆典映墨灯、落英燕舞灯等商城家具。",
+          "适合打上互动家具、春季主题、视觉向标签。"
+        ],
+        strategy: [
+          "建筑党重点看互动件和氛围件。",
+          "战力党可放在福利和核芯之后再考虑。",
+          "软件里适合配“适合谁抽”的判断说明。"
+        ],
+        tips: "详情页应突出互动卖点，而不是只列名字。"
+      },
+      {
+        title: "新核芯 · 蓄势寒锋",
+        category: "战斗养成",
+        status: "上新",
+        dateText: "03/21 上线",
+        priority: "高",
+        audience: "武士、近战流、PVP / PVE 双修",
+        serverScope: "战斗系统",
+        summary: "偏近战的新核芯，兼顾伤害、抗伤和形态切换。",
+        rewards: ["火力提升", "伤害抗性", "寒锋形态", "蓄力重斩", "快速连斩"],
+        highlights: [
+          "对近战和 PVP 玩家特别重要。",
+          "星级提升后的战力变化很明显。",
+          "很适合后续扩展成攻略页。"
+        ],
+        strategy: [
+          "战力玩家应先看机制和养成优先级。",
+          "可以单独写“适合职业”。",
+          "后续还能追加连招与搭配思路。"
+        ],
+        tips: "是当前最值得深挖的战斗栏目之一。"
+      },
+      {
+        title: "废土很忙",
+        category: "近期外观",
+        status: "上新",
+        dateText: "03/19 上线",
+        priority: "中",
+        audience: "时装党、收藏党",
+        serverScope: "时装池",
+        summary: "西部牛仔与废土风格结合的外观内容，更偏消费型。",
+        rewards: ["新时装外观", "废土主题风格"],
+        highlights: [
+          "适合放在新时装栏目，不要压过主活动。",
+          "视觉风格鲜明，但功能价值不高。"
+        ],
+        strategy: [
+          "更适合做图鉴展示。",
+          "可与其他近期外观一起比较。"
+        ],
+        tips: "作为补充栏目很合适。"
+      },
+      {
+        title: "樱灵狐梦",
+        category: "近期外观",
+        status: "本月热门",
+        dateText: "03/12 上线",
+        priority: "中",
+        audience: "春日外观党、动作收集党",
+        serverScope: "时装活动",
+        summary: "具有春日感的外观内容，包含动作、头饰等限定要素。",
+        rewards: ["头饰", "背包", "动作", "限定外观"],
+        highlights: [
+          "适合放在本月热门外观区域。",
+          "展示价值高，但优先级低于主活动。"
+        ],
+        strategy: [
+          "适合放在第二屏或近期上新页。",
+          "可以与家具池一起做视觉主题推荐。"
+        ],
+        tips: "后续加入截图会更好看。"
+      },
+      {
+        title: "3 月上旬福利合集",
+        category: "近期回顾",
+        status: "已过半",
+        dateText: "03/04 起陆续上线",
+        priority: "中",
+        audience: "补课玩家、回顾党",
+        serverScope: "经典服 / 简单生存专服",
+        summary: "收纳了 3 月上半月的福利、登录奖励和一些便利性更新。",
+        rewards: ["家具自选箱", "1 元月卡", "登录奖励", "功能优化"],
+        highlights: [
+          "适合做成时间线或本月回顾。",
+          "能让玩家区分现在做什么、之前出过什么。"
+        ],
+        strategy: [
+          "适合给错过前半月内容的玩家补课。",
+          "可以后续继续追加每月档案。"
+        ],
+        tips: "是软件做长期信息整理的好起点。"
+      },
+      {
+        title: "人偶契约",
+        category: "历史下架",
+        status: "已下架",
+        dateText: "03/12 03:00 下架",
+        priority: "记录",
+        audience: "图鉴党、返场关注玩家",
+        serverScope: "历史档案",
+        summary: "已经下架，更适合放入“最近下架 / 错过提醒”分区。",
+        rewards: ["历史外观档案", "返场参考记录"],
+        highlights: [
+          "不再属于当前活动，但历史检索价值很高。",
+          "后续可以扩展成返场追踪。"
+        ],
+        strategy: [
+          "建议独立放进历史分区。",
+          "便于之后查“什么时候上过”。"
+        ],
+        tips: "历史栏会让这个软件更耐用。"
+      }
+    ];
+
+    const audienceGuides = {
+      "白嫖 / 平民": [
+        "优先顺序：春日主活动 > 登录 / 预约奖励 > 青松季减负 > 新服福利 > 竞技测试 > 外观池",
+        "先拿稳定资源和效率，再考虑纯展示向内容。"
+      ],
+      "回坑玩家": [
+        "先看青松季减负，再看春日福利和新服信息。",
+        "核心是判断现在回坑值不值得。"
+      ],
+      "庄园 / 建筑党": [
+        "重点看绿野仙踪家具池、春日氛围内容和本月时装。",
+        "这波视觉主题很统一，很适合展示。"
+      ],
+      "战力 / PVP": [
+        "先看特战巅峰赛，再看蓄势寒锋。",
+        "一个影响参赛时机，一个影响实战搭配。"
+      ]
+    };
+
+    const categories = ["全部", "主活动", "竞技", "版本优化", "奖池", "战斗养成", "近期外观", "近期回顾", "历史下架"];
+    let currentCategory = "全部";
+    let currentAudience = "白嫖 / 平民";
+
+    const categoryChips = document.getElementById("categoryChips");
+    const audienceChips = document.getElementById("audienceChips");
+    const cards = document.getElementById("cards");
+    const featuredCard = document.getElementById("featuredCard");
+    const heroHighlight = document.getElementById("heroHighlight");
+    const guideText = document.getElementById("guideText");
+    const modal = document.getElementById("modal");
+
+    function createChip(text, active, onClick) {
+      const btn = document.createElement("button");
+      btn.className = `chip${active ? " active" : ""}`;
+      btn.textContent = text;
+      btn.addEventListener("click", onClick);
+      return btn;
+    }
+
+    function listToHTML(items) {
+      return items.map(item => `<p>${item}</p>`).join("");
+    }
+
+    function renderFilters() {
+      categoryChips.innerHTML = "";
+      categories.forEach(category => {
+        categoryChips.appendChild(createChip(category, category === currentCategory, () => {
+          currentCategory = category;
+          renderFilters();
+          renderContent();
+        }));
+      });
+
+      audienceChips.innerHTML = "";
+      Object.keys(audienceGuides).forEach(audience => {
+        audienceChips.appendChild(createChip(audience, audience === currentAudience, () => {
+          currentAudience = audience;
+          renderFilters();
+          renderGuide();
+        }));
+      });
+    }
+
+    function getFilteredEvents() {
+      return currentCategory === "全部"
+        ? events
+        : events.filter(item => item.category === currentCategory);
+    }
+
+    function renderFeatured(item) {
+      heroHighlight.textContent = `当前最推荐：${item.title}`;
+      featuredCard.innerHTML = `
+        <div class="featured-top">
+          <span class="tag">${item.category}</span>
+          <span class="tag">${item.status}</span>
+          <span class="tag">优先级：${item.priority}</span>
+        </div>
+        <h2>${item.title}</h2>
+        <div class="featured-meta">
+          <div>${item.dateText}</div>
+          <div>适合：${item.audience}</div>
+          <div>范围：${item.serverScope}</div>
+          <div style="margin-top:8px">${item.summary}</div>
+        </div>
+      `;
+    }
+
+    function renderCards(items) {
+      cards.innerHTML = "";
+      items.forEach(item => {
+        const card = document.createElement("article");
+        card.className = "card";
+        card.innerHTML = `
+          <div class="card-top">
+            <span class="mini-tag">${item.category}</span>
+            <span class="mini-tag status">${item.status}</span>
+          </div>
+          <h3>${item.title}</h3>
+          <p>${item.summary}</p>
+          <div class="meta">
+            <div>${item.dateText}</div>
+            <div>优先级：${item.priority}</div>
+            <div>适合：${item.audience}</div>
+          </div>
+          <div class="action-row">
+            <button class="primary-btn">查看详情</button>
+          </div>
+        `;
+        card.querySelector(".primary-btn").addEventListener("click", () => openModal(item));
+        cards.appendChild(card);
+      });
+    }
+
+    function renderContent() {
+      const items = getFilteredEvents();
+      renderFeatured(items[0]);
+      renderCards(items);
+    }
+
+    function renderGuide() {
+      const lines = audienceGuides[currentAudience];
+      guideText.innerHTML = `
+        <h3 class="side-title">${currentAudience} 现在先做什么</h3>
+        ${listToHTML(lines)}
+      `;
+    }
+
+    function fillList(elementId, items) {
+      const node = document.getElementById(elementId);
+      node.innerHTML = items.map(item => `<li>${item}</li>`).join("");
+    }
+
+    function openModal(item) {
+      document.getElementById("modalTitle").textContent = item.title;
+      document.getElementById("modalMeta").innerHTML = `
+        <div>${item.category} | ${item.status}</div>
+        <div>${item.dateText}</div>
+        <div>适合：${item.audience}</div>
+        <div>范围：${item.serverScope}</div>
+      `;
+      fillList("modalSummary", [item.summary]);
+      fillList("modalHighlights", item.highlights);
+      fillList("modalRewards", item.rewards);
+      fillList("modalStrategy", item.strategy);
+      fillList("modalTips", [item.tips]);
+      modal.classList.add("open");
+    }
+
+    function closeModal() {
+      modal.classList.remove("open");
+    }
+
+    document.getElementById("closeModal").addEventListener("click", closeModal);
+    modal.addEventListener("click", (event) => {
+      if (event.target === modal) closeModal();
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closeModal();
+    });
+
+    renderFilters();
+    renderContent();
+    renderGuide();
+  </script>
+</body>
+</html>
